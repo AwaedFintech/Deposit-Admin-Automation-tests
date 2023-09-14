@@ -1,5 +1,6 @@
 package Pages.DOM;
 
+import Pages.PageBase;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -11,40 +12,69 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
 
-public class DOMBase {
-    protected static WebDriver driver ;
+public class DOMBase extends PageBase {
+    String sendTextValue ;
+    String elementReturnedValue ;
 
-    public void initDriver(WebDriver driver){
-        this.driver = driver ;
-        PageFactory.initElements(driver, this); //initialize the objects
+    public DOMBase(WebDriver driver){
+        super.initDriver(driver);
     }
 
-
-    protected static void clickbutton(WebElement button) {
-        button.click();
-
-    }
-    protected static void sendText (WebElement textElement , String value) {
-        textElement.sendKeys(value);
+    public WebElement getInput(By elementIdentifier){
+        return driver.findElement(elementIdentifier);
     }
 
-    public void GoToSpecificPageFromSideMenu(int pageIndex) {
-        List<WebElement> list = driver.findElements(By.className("v-list-item__title"));
-        list.get(pageIndex).click();
+    public String getTextFromElement(WebElement element){
+        return element.getText();
     }
 
-    public void waitUntilElementIsClickable(By bySelector) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.elementToBeClickable(bySelector)).click();
+    public String getOnlyNumberFromText(WebElement element){
+        return  element.getText().replaceAll("[^0-9]", "");
+
+    }
+    public Integer[] tableHandle_getTableSize(){
+        Integer[] tableSize = new Integer[2];
+        int rowNum = driver.findElements(By.xpath("//table/tbody/tr")).size();
+        int colNum = driver.findElements(By.xpath("//table/tbody/tr[1]/td")).size();
+        tableSize[0] = rowNum;
+        tableSize[1] = colNum;
+        return tableSize;
     }
 
-    public boolean visibilityOfElements(WebElement element){
-        return element.isDisplayed();
+    public String table_GetSpecificField(int rowIndex,int columnIndex){
+        return driver.findElement(By.xpath("//table/tbody/tr["+rowIndex+"]/td["+columnIndex+"]")).getText();
     }
 
-    public void scrollToTheEndOfPage(){
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.scrollBy(0,document.body.scrollHeight)", "");
+    // ?? If i need to check two things
+    public boolean validateElement(WebElement element,String[] validations){
+        boolean status = false;
+        for (int i=0; i< validations.length ; i++){
+            if(validations[i] == "visible"){
+                status = element.isDisplayed();
+            }
+            if(validations[i] == "clickable"){
+                status = element.isEnabled();
+            }
+            if(validations[i] == "hasText"){
+                status = (element.getText()).isEmpty();
+            }
+        }
+        return status;
+    }
+
+    public boolean isTextEqualToText(WebElement element, String expectedText){
+        if(element.getText() == expectedText)
+            return true;
+        else
+            return false;
+    }
+    public String getSpecificAttribute(WebElement element, String attribute){
+        return  element.getAttribute(attribute);
+    }
+
+    public void getFilterOptions(String filter){
+
+
     }
 
 }
