@@ -29,6 +29,10 @@ public class PageBase {
         textElement.sendKeys(value);
     }
 
+    public String getCurrentUrl(){
+        return driver.getCurrentUrl();
+    }
+
     public void GoToSpecificPageFromSideMenu(int pageIndex) {
         List<WebElement> list = driver.findElements(By.className("v-list-item__title"));
         list.get(pageIndex).click();
